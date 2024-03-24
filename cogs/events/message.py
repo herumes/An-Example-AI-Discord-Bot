@@ -63,7 +63,7 @@ class MessageCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.message_history: Dict[int, UserMessageHistory] = {}
-        self.rate_limiter = RateLimiter(60, 60)  # 5/min
+        self.rate_limiter = RateLimiter(5, 60)  # 5/min
         colorama.init()
 
     async def process_request(self, message: discord.Message, start_time, options, log_prefix, model, user_history):
@@ -204,7 +204,7 @@ class MessageCog(commands.Cog):
                         options['stream'] = True
 
                     try:
-                        await self.process_request(message, start_time, options, log_prefix, model, user_history)
+                        asyncio.create_task(self.process_request(message, start_time, options, log_prefix, model, user_history))
                     except Exception as e:
                         print(f"{log_prefix} | {Fore.RED}Error {Style.RESET_ALL} | {e}")
 
